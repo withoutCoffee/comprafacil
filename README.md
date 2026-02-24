@@ -1,97 +1,162 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+﻿# CompraFacil
 
-# Getting Started
+Aplicativo mobile de **controle de vendas, clientes, produtos e receitas**, desenvolvido com React Native CLI, TypeScript, Realm e NativeWind. Funciona **100% offline** - todos os dados sao armazenados localmente no dispositivo.
 
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
+---
 
-## Step 1: Start Metro
+## Screenshots
 
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
+| Clientes | Produtos |
+|:---:|:---:|
+| ![Clientes](docs/clientes.png) | ![Produtos](docs/produtos.png) |
 
-To start the Metro dev server, run the following command from the root of your React Native project:
+| Vendas | Receitas |
+|:---:|:---:|
+| ![Vendas](docs/vendas.png) | ![Receitas](docs/receitas.png) |
 
-```sh
-# Using npm
-npm start
+---
 
-# OR using Yarn
-yarn start
+## Funcionalidades
+
+- **Clientes** - cadastro e listagem de clientes
+- **Produtos** - gerenciamento de estoque e precos
+- **Vendas** - registro de vendas vinculadas a clientes e produtos
+- **Receitas** - controle de receitas e entradas financeiras
+- Armazenamento local com **Realm** (offline-first)
+- Interface estilizada com **NativeWind (Tailwind CSS)**
+
+---
+
+## Tecnologias
+
+| Tecnologia | Versao |
+|---|---|
+| React Native | 0.84 |
+| TypeScript | ^5.8 |
+| Realm | ^20.2 |
+| NativeWind | ^4.2 |
+| React Navigation | ^7 |
+| React Native Reanimated | ^4.2 |
+
+---
+
+## Como Executar
+
+### Pre-requisitos
+
+- Node.js >= 22
+- JDK 17+
+- Android Studio com emulador configurado (ou dispositivo fisico via USB)
+- Variavel `ANDROID_HOME` configurada **ou** `sdk.dir` definido em `android/local.properties`
+
+### 1. Instalar dependencias
+
+```bash
+npm install
 ```
 
-## Step 2: Build and run your app
+### 2. Iniciar o Metro Bundler
 
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
+```bash
+npx react-native start
+```
 
-### Android
+### 3. Executar no Android
 
-```sh
-# Using npm
+Em outro terminal:
+
+```bash
+npx react-native run-android
+```
+
+Ou usando o script do `package.json`:
+
+```bash
 npm run android
-
-# OR using Yarn
-yarn android
 ```
 
-### iOS
+### 4. Executar no iOS (macOS apenas)
 
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
-
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
-
-```sh
-bundle install
+```bash
+cd ios && pod install && cd ..
+npx react-native run-ios
 ```
 
-Then, and every time you update your native dependencies, run:
+### Limpar cache (em caso de erros de build)
 
-```sh
-bundle exec pod install
+```bash
+# Limpar cache do Metro
+npx react-native start --reset-cache
+
+# Limpar build do Android
+cd android && .\gradlew clean && cd ..
 ```
 
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
+---
 
-```sh
-# Using npm
-npm run ios
+## Estrutura de Pastas
 
-# OR using Yarn
-yarn ios
+```
+src/
+  database/
+    realm.ts              <- configuracao e abertura do Realm
+  models/
+    ClienteModel.ts
+    ProdutoModel.ts
+    VendaModel.ts
+    ReceitaModel.ts
+  repositories/
+    BaseRepository.ts
+    ClienteRepository.ts
+    ProdutoRepository.ts
+    VendaRepository.ts
+    ReceitaRepository.ts
+  services/
+    ClienteService.ts
+    ProdutoService.ts
+    VendaService.ts
+    ReceitaService.ts
+  screens/
+    ClientesScreen.tsx
+    ProdutosScreen.tsx
+    VendasScreen.tsx
+    ReceitasScreen.tsx
+  components/
+    Card.tsx
+    Button.tsx
+    StatusBadge.tsx
+  types/
+    index.ts
 ```
 
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
+---
 
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
+## Configuracoes relevantes
 
-## Step 3: Modify your app
+### `babel.config.js`
 
-Now that you have successfully run the app, let's make changes!
+```js
+module.exports = {
+  presets: [
+    'module:@react-native/babel-preset',
+    'nativewind/babel', // inclui react-native-worklets/plugin internamente
+  ],
+};
+```
 
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
+### `metro.config.js`
 
-When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
+```js
+const { getDefaultConfig, mergeConfig } = require('@react-native/metro-config');
+const { withNativeWind } = require('nativewind/metro');
 
-- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
-- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
+const config = mergeConfig(getDefaultConfig(__dirname), {});
 
-## Congratulations! :tada:
+module.exports = withNativeWind(config, { input: './global.css' });
+```
 
-You've successfully run and modified your React Native App. :partying_face:
+### `android/local.properties`
 
-### Now what?
-
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
-
-# Troubleshooting
-
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
-
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+```
+sdk.dir=C:\\Users\\<seu-usuario>\\AppData\\Local\\Android\\Sdk
+```
